@@ -1,0 +1,124 @@
+<!-- <p>view works!</p>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table"> 
+
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element">{{element.age}}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="weight">
+      <th mat-header-cell *matHeaderCellDef>Weight</th>
+      <td mat-cell *matCellDef="let element">{{element.city}}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="symbol">
+      <th mat-header-cell *matHeaderCellDef>Symbol</th>
+      <td mat-cell *matCellDef="let element">{{element.place}}</td>
+    </ng-container>
+
+	<ng-container matColumnDef="symbol">
+		<th mat-header-cell *matHeaderCellDef></th>
+		<td mat-cell *matCellDef="let element">{{element.state}}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="symbol">
+		<th mat-header-cell *matHeaderCellDef>ZipCode</th>
+		<td mat-cell *matCellDef="let element">{{element.zipCode}}</td>
+	</ng-container>
+
+    <ng-container matColumnDef="Operation">
+        <th>
+            <button>Delete</button>
+        </th>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+        mat-row
+        (click)="clickedRows.add(row)"
+        [class.demo-row-is-clicked]="clickedRows.has(row)"
+        *matRowDef="let row; columns: displayedColumns;"
+    ></tr>
+  </table>
+  
+  <div>
+    <h3>
+      Click Log
+    </h3>
+  </div> -->
+  
+  <!-- <div *ngIf="!clickedRows.size">
+    Clicked rows will be logged here
+  </div>
+  
+  <ul>
+    <li *ngFor="let clickedRow of clickedRows">
+      Clicked on {{clickedRow.name}}
+    </li>
+  </ul> -->
+    <!--<br />
+    <br />
+   <div class="container">
+	<br>
+	<div class="row">
+		<table class="table table-striped table-bordered col-lg-4">
+            <caption><i>Add/remove textbox</i></caption>
+			<thead>
+				<tr>
+					<th>Item Name
+						<a (click)="onEditCloseItems()" class="text-info float-right">
+							<i class="mdi mdi-{{isEditItems ? 'close' : 'pencil'}} mdi-18px"></i>
+						</a>
+					</th>
+				</tr>
+			</thead>
+
+			<tbody *ngIf="!isEditItems">
+				<tr *ngIf="firstField">
+					<td>
+						<i (click)="firstField = false" class="mdi mdi-close mdi-18px"></i> {{firstFieldName}}
+					</td>
+				</tr>
+				<tr *ngFor="let field of fieldArray; let i = index">
+					<td *ngIf="field?.name">
+						<i (click)="deleteFieldValue(i)" class="mdi mdi-close mdi-18px"></i> {{field.name}}</td>
+				</tr>
+			</tbody>
+
+			<tbody *ngIf="isEditItems">
+				<tr>
+					<td *ngIf="firstField">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div (click)="firstField = false" class="input-group-text"><i class="mdi mdi-close mdi-18px"></i></div>
+							</div>
+							<input [(ngModel)]="firstFieldName" class="form-control py-2 " type="text" name="firstFieldName" placeholder="Item Name">
+						</div>
+					</td>
+				</tr>
+
+				<tr *ngFor="let field of fieldArray; let i = index">
+					<td>
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div (click)="deleteFieldValue(i)" class="input-group-text"><i class="mdi mdi-close mdi-18px"></i></div>
+							</div>
+							<input [(ngModel)]="field.name" class="form-control" type="text" name="{{field.name}}" placeholder="Item Name">
+						</div>
+					</td>
+				</tr>
+				<tr *ngFor="let field of fieldArray; let i = index">
+					<td>
+						<button mat-button *ngIf="fieldArray.length <= 2" class="btn btn-success btn-sm" type="button" (click)="addFieldValue(i)" style="margin-right:10px">Add More Item</button>
+						<button mat-flat-button (click)="onEditCloseItems()" class="btn btn-primary btn-sm" type="button">Save Items</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>-->
