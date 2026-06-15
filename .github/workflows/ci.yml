@@ -1,0 +1,119 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI Pipeline — EmployeeForm (Angular 12)
+#
+# Triggers on every push and pull request to main.
+# Pipeline stages:
+#   1. install    → npm ci (clean, reproducible install from lock file)
+#   2. lint       → ng lint (code quality gate)
+#   3. test       → ng test headless (unit tests via Karma + Chrome headless)
+#   4. build      → ng build --configuration production (compilation gate)
+#   5. docker     → build & tag image, push to GitHub Container Registry (GHCR)
+#
+# Required repository secrets:
+#   GITHUB_TOKEN  → automatically provided by GitHub Actions (no setup needed)
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+
+  # ── Job 1: Install, Lint, Test, Build ─────────────────────────────────────
+  build-and-test:
+    name: Install → Lint → Test → Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'npm'                    # caches node_modules between runs
+
+      - name: Install dependencies
+        run: npm ci                       # uses package-lock.json for reproducibility
+
+      - name: Lint
+        run: npm run ng -- lint           # fails pipeline on lint errors
+
+      - name: Run unit tests (headless)
+        run: |
+          npm run ng -- test \
+            --watch=false \
+            --browsers=ChromeHeadless \
+            --code-coverage
+        # ChromeHeadless is pre-installed on ubuntu-latest runners
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()                      # upload even if tests fail
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+      - name: Build production bundle
+        run: npm run build -- --configuration production
+
+      - name: Upload build artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-sso-app
+          path: dist/sso-app/
+          retention-days: 1              # only needed for the docker job below
+
+  # ── Job 2: Docker Build & Push to GHCR ────────────────────────────────────
+  docker:
+    name: Docker Build → Push to GHCR
+    runs-on: ubuntu-latest
+    needs: build-and-test               # only runs if job 1 passes
+    if: github.ref == 'refs/heads/main' # only on direct push to main, not PRs
+
+    permissions:
+      contents: read
+      packages: write                   # required to push to GHCR
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (tags & labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-         # e.g. sha-a1b2c3d
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha          # GitHub Actions cache for layer reuse
+          cache-to: type=gha,mode=max
