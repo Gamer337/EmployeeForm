@@ -9,7 +9,6 @@ A full-stack Angular 12 application for employee profile management, containeris
 ![CI Pipeline](https://github.com/Gamer337/EmployeeForm/actions/workflows/ci.yml/badge.svg)
 ![Docker](https://img.shields.io/badge/docker-ready-blue?logo=docker)
 ![Angular](https://img.shields.io/badge/angular-12-red?logo=angular)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 Every push to `main` triggers a two-job GitHub Actions pipeline:
 
